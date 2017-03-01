@@ -12,8 +12,6 @@ import stanford.karel.*;
 @SuppressWarnings("serial")
 public class CheckerboardKarel extends SuperKarel {
 	
-	private boolean needsABeeper;
-	
 	public void run(){
 		putBeepersOnTheRow();
 		while(leftIsClear()){
@@ -24,8 +22,7 @@ public class CheckerboardKarel extends SuperKarel {
 	}
 	
 	private void putBeepersOnTheRow(){
-		needsABeeper = decideTheStartingBeeper();
-		drawThisSquare();
+		decideTheStartingBeeper();
 		while(frontIsClear()){
 			move();
 			drawThisSquare();
@@ -33,18 +30,19 @@ public class CheckerboardKarel extends SuperKarel {
 		returnToBeginingOfRow();		
 	}
 	
-	private boolean decideTheStartingBeeper(){
+	private void decideTheStartingBeeper(){
 		if(rightIsBlocked()){
-			return true;
-		}
-		moveToPreviousRow();
-		if(beepersPresent()){
-			moveToNextRow();
-			return false;
+			putBeeper();
 		} 
 		else {
-			moveToNextRow();
-			return true;
+			moveToPreviousRow();
+			if(beepersPresent()){
+				moveToNextRow();
+			} 
+			else {
+				moveToNextRow();
+				putBeeper();
+			}
 		}
 	}
 	
@@ -61,12 +59,20 @@ public class CheckerboardKarel extends SuperKarel {
 	}
 	
 	private void drawThisSquare(){
-		if(needsABeeper){
+		moveBackward();
+		if(beepersPresent()){
+			move();
+		} 
+		else {
+			move();
 			putBeeper();
-			needsABeeper = false;
-		} else {
-			needsABeeper = true;
 		}
+	}
+	
+	private void moveBackward(){
+		turnAround();
+		move();
+		turnAround();
 	}
 	
 	private void returnToBeginingOfRow(){
